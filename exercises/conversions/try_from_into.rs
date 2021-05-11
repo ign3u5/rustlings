@@ -26,13 +26,33 @@ struct Color {
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = Box<dyn error::Error>;
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        match tuple {
+            (0..=255, 0..=255, 0..=255) => Ok(Color {
+                red: tuple.0 as u8,
+                green: tuple.1 as u8,
+                blue: tuple.2 as u8
+            }),
+            _ => Err("Invalid colour tuple".into())
+        }
+    }
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = Box<dyn error::Error>;
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let valid_colours: Vec<&i16> = arr.iter().filter(|&&v| v > -1 && v < 266).collect();
+        if valid_colours.len() == 3 {
+            Ok (Color {
+                red: *valid_colours[0] as u8,
+                green: *valid_colours[1] as u8,
+                blue: *valid_colours[2] as u8
+            })
+        } else {
+            Err("Invalid colour array".into())
+        }
+    }
 }
 
 // Slice implementation
